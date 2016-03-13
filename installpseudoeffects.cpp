@@ -6,7 +6,6 @@
 
 InstallPseudoEffects::InstallPseudoEffects(QObject *parent): QThread(parent)
 {
-
 }
 
 void InstallPseudoEffects::run()
@@ -195,6 +194,7 @@ void InstallPseudoEffects::addPackage(QString n)
     {
         peFiles << packagePath + n + "/PresetEffects.xml";
     }
+
 }
 
 void InstallPseudoEffects::removePackage(QString n)

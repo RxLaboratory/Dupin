@@ -15,6 +15,9 @@ public:
     void setPresetEffects(QString fileName);
     void setScriptUI(QString sui);
     void setVersion(QString v);
+    QString getPresetEffects();
+    QString getScriptUI();
+    QString getVersion();
 
 signals:
     void chosen(QString,QString,QString version,bool);

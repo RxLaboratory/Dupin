@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include <QtDebug>
+#include "preinstall.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -20,22 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     findAe();
-
 }
 
 void MainWindow::findAe()
 {
-    bool found = false;
-#ifdef Q_OS_WIN
-    found = findAeVersions("C:\\Program Files\\Adobe\\");
-    bool found2 = findAeVersions("C:\\Program Files (x86)\\Adobe\\");
-    if (!found) found = found2;
-#endif
-#ifdef Q_OS_MAC
-    found = findAeVersions("/Applications");
-#endif
+    QList<AECheckBox *> aeVersions = PreInstall::findAE();
 
-    if (!found)
+    if (aeVersions.count() == 0)
     {
         aeVersionsLabel->setText("The installer could not find any valid installation of After Effects.\nPlease select the folder where it is installed.");
         //add custom path
@@ -43,47 +36,20 @@ void MainWindow::findAe()
         versionsLayout->addWidget(cpw);
         connect(cpw,SIGNAL(chosen(QString,QString,QString,bool)),this,SLOT(aeCheckBox_clicked(QString,QString,QString,bool)));
     }
+    else //add AE buttons
+    {
+        foreach(AECheckBox *cb,aeVersions)
+        {
+            versionsLayout->addWidget(cb);
+            connect(cb,SIGNAL(chosen(QString,QString,QString,bool)),this,SLOT(aeCheckBox_clicked(QString,QString,QString,bool)));
+        }
+    }
     versionsLayout->addStretch();
 }
 
 bool MainWindow::loadPackages()
 {
-    QString packagePath = "packages/";
-#ifdef Q_OS_MAC
-    QDir bundle = QApplication::applicationDirPath();
-    bundle.cdUp();
-    packagePath = bundle.path() + "/Resources/packages/";
-#endif
-
-    QFile configFile(packagePath + "config.xml");
-    if (!configFile.exists())
-    {
-        QMessageBox::critical(this,"Configuration file not found","Warning: could not find the configuration file needed to install the packages.");
-        QMessageBox::critical(this,"Configuration file not found",configFile.fileName());
-        return false;
-    }
-
-    //load images
-    programIconLabel->setPixmap(QPixmap(packagePath + "image.png"));
-    this->setWindowIcon(QIcon(packagePath + "icon.png"));
-
-    //parse XML config
-    QDomDocument configDoc;
-    QDomElement  configDocElement;
-    configFile.open(QIODevice::ReadOnly);
-    if (!configDoc.setContent(configFile.readAll()))
-    {
-        QMessageBox::critical(this,"Invalid configuration file","Warning: cannot read configuration file. Make sure it is a valid XML Document.");
-        configFile.close();
-        return false;
-    }
-    configFile.close();
-
-
-    //load XML
-    configDocElement = configDoc.documentElement();
-    QDomElement dupinElt = configDocElement.firstChild().toElement();
-    QDomNodeList dupinList = dupinElt.childNodes();
+    QDomNodeList dupinList = PreInstall::loadPackages();
 
     //get config
     QString softwareName = "";
@@ -102,6 +68,7 @@ bool MainWindow::loadPackages()
         else if (itemElt.tagName() == "package")
         {
             QDomNodeList packageElts = itemElt.childNodes();
+            QString packagePath = PreInstall::getPackagePath();
 
             QString packageName = "";
             QString packageDescription = "";
@@ -154,46 +121,6 @@ bool MainWindow::loadPackages()
     versionLabel->setText(softwareVersion);
 
     return true;
-}
-
-bool MainWindow::findAeVersions(QString dir)
-{
-    QStringList filters("Adobe After Effects *");
-
-    QDir adobeDir(dir);
-
-    adobeDir.setNameFilters(filters);
-    adobeDir.setFilter(QDir::Dirs);
-
-    QFileInfoList versionPaths = adobeDir.entryInfoList();
-
-    bool found = false;
-
-    foreach(QFileInfo path,versionPaths)
-    {
-        QDir aePath(path.absoluteFilePath());
-
-        #ifdef Q_OS_WIN
-        QFile presetEffectsFile(path.absoluteFilePath() + "/Support Files/PresetEffects.xml");
-        QDir scriptUI(path.absoluteFilePath() + "/Support Files/Scripts/ScriptUI Panels/");
-        #endif
-        #ifdef Q_OS_MAC
-        QFile presetEffectsFile(aePath.absolutePath() + "/" + aePath.dirName() + ".app/Contents/Resources/PresetEffects.xml");
-        QDir scriptUI(path.absoluteFilePath() + "/Scripts/ScriptUI Panels/");
-        #endif
-
-        if (presetEffectsFile.exists() && scriptUI.exists())
-        {
-            AECheckBox *aeButton = new AECheckBox(aePath.dirName());
-            aeButton->setVersion(aePath.dirName());
-            aeButton->setPresetEffects(presetEffectsFile.fileName());
-            aeButton->setScriptUI(scriptUI.absolutePath());
-            versionsLayout->addWidget(aeButton);
-            connect(aeButton,SIGNAL(chosen(QString,QString,QString,bool)),this,SLOT(aeCheckBox_clicked(QString,QString,QString,bool)));
-            found = true;
-        }
-    }
-    return found;
 }
 
 void MainWindow::on_installButton_clicked()
@@ -271,7 +198,7 @@ void MainWindow::finished(bool o)
     }
     else
     {
-        log("\n# Installation complete with some errors. See this log for more information.\nYou may need to manually install Duik.\nGo to http://www.duduf.net to get help.");
+        log("\n# Installation complete with some errors. See this log for more information.\nDo you have administrator privileges?\nYou may need to manually install Duik.\nGo to http://www.duduf.net to get help.");
     }
 
     cancelButton->setText("Close");

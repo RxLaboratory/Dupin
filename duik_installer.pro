@@ -19,14 +19,18 @@ SOURCES += main.cpp\
     aecheckbox.cpp \
     installpseudoeffects.cpp \
     custompathwidget.cpp \
-    packageselector.cpp
+    packageselector.cpp \
+    preinstall.cpp \
+    quietinstaller.cpp
 
 HEADERS  += mainwindow.h \
     qfichier.h \
     aecheckbox.h \
     installpseudoeffects.h \
     custompathwidget.h \
-    packageselector.h
+    packageselector.h \
+    preinstall.h \
+    quietinstaller.h
 
 FORMS    += mainwindow.ui \
     custompathwidget.ui \

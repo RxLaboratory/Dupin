@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QFontDatabase>
+#include "quietinstaller.h"
+
+//#define QT_NO_DEBUG_OUTPUT
 
 int main(int argc, char *argv[])
 {
@@ -21,7 +24,25 @@ int main(int argc, char *argv[])
         QFontDatabase::addApplicationFontFromData(res3.readAll());
     }
 
+    bool quiet = false;
+
     QApplication a(argc, argv);
+
+    if (argc>1)
+    {
+        QString arg1 = argv[1];
+        qDebug() << arg1;
+        if (arg1 == "-q" || arg1 == "-quiet" || arg1 == "-s" || arg1 == "-silent")
+        {
+            quiet = true;
+
+            QuietInstaller qi = QuietInstaller();
+        }
+        else
+        {
+            qWarning() << "Unknown argument";
+        }
+    }
 
     MainWindow w;
     w.show();

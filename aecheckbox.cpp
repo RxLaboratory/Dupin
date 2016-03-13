@@ -33,3 +33,18 @@ void AECheckBox::choice(bool checked)
 {
     emit chosen(presetsXML,scriptUI,version,checked);
 }
+
+QString AECheckBox::getPresetEffects()
+{
+    return presetsXML;
+}
+
+QString AECheckBox::getScriptUI()
+{
+    return scriptUI;
+}
+
+QString AECheckBox::getVersion()
+{
+    return version;
+}

@@ -79,7 +79,7 @@
           <item>
            <widget class="QLabel" name="versionLabel">
             <property name="text">
-             <string>0</string>
+             <string>0.1</string>
             </property>
            </widget>
           </item>
@@ -184,8 +184,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>418</width>
-             <height>260</height>
+             <width>319</width>
+             <height>44</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="versionsLayout">
@@ -218,8 +218,8 @@ please select where you want to install Duik.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>418</width>
-             <height>260</height>
+             <width>194</width>
+             <height>31</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="packagesLayout">

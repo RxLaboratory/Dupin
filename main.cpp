@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QFontDatabase>
-#include "quietinstaller.h"
+#ifdef Q_OS_WIN
+    #include "quietinstaller.h"
+#endif
+
 
 //#define QT_NO_DEBUG_OUTPUT
 
@@ -28,21 +31,23 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    if (argc>1)
-    {
-        QString arg1 = argv[1];
-        qDebug() << arg1;
-        if (arg1 == "-q" || arg1 == "-quiet" || arg1 == "-s" || arg1 == "-silent")
+    #ifdef Q_OS_WIN
+        if (argc>1)
         {
-            quiet = true;
+            QString arg1 = argv[1];
+            qDebug() << arg1;
+            if (arg1 == "-q" || arg1 == "-quiet" || arg1 == "-s" || arg1 == "-silent")
+            {
+                quiet = true;
 
-            QuietInstaller qi = QuietInstaller();
+                QuietInstaller qi = QuietInstaller();
+            }
+            else
+            {
+                qWarning() << "Unknown argument";
+            }
         }
-        else
-        {
-            qWarning() << "Unknown argument";
-        }
-    }
+    #endif
 
     MainWindow w;
     w.show();

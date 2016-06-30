@@ -43,6 +43,10 @@ void MainWindow::findAe()
             versionsLayout->addWidget(cb);
             connect(cb,SIGNAL(chosen(QString,QString,QString,bool)),this,SLOT(aeCheckBox_clicked(QString,QString,QString,bool)));
         }
+        //add custom path
+        CustomPathWidget *cpw = new CustomPathWidget;
+        versionsLayout->addWidget(cpw);
+        connect(cpw,SIGNAL(chosen(QString,QString,QString,bool)),this,SLOT(aeCheckBox_clicked(QString,QString,QString,bool)));
     }
     versionsLayout->addStretch();
 }

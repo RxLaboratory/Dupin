@@ -32,6 +32,37 @@ void CustomPathWidget::on_pushButton_clicked()
 
 bool CustomPathWidget::detectAe(QString dir)
 {
+    QStringList dirs = dir.split("/");
+    qDebug() << dirs;
+    if (dirs[dirs.count()-1] == "ScriptUI Panels")
+    {
+        dirs.removeAt(dirs.count()-1);
+        dirs.removeAt(dirs.count()-1);
+        dir = dirs.join("/");
+    }
+    else if (dirs[dirs.count()-1] == "Scripts")
+    {
+        dirs.removeAt(dirs.count()-1);
+        dir = dirs.join("/");
+    }
+
+    qDebug() << dir;
+
+    dirs = dir.split("\\");
+    if (dirs[dirs.count()-1] == "ScriptUI Panels")
+    {
+        dirs.removeAt(dirs.count()-1);
+        dirs.removeAt(dirs.count()-1);
+        dir = dirs.join("/");
+    }
+    else if (dirs[dirs.count()-1] == "Scripts")
+    {
+        dirs.removeAt(dirs.count()-1);
+        dir = dirs.join("/");
+    }
+
+    qDebug() << dir;
+
 #ifdef Q_OS_WIN
     QFile pe(dir + "/PresetEffects.xml");
     if (!pe.exists())

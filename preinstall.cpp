@@ -1,4 +1,7 @@
 #include "preinstall.h"
+#ifdef Q_OS_MAC
+    #include "QCoreApplication"
+#endif
 
 
 PreInstall::PreInstall(QObject *parent) : QObject(parent)
@@ -22,7 +25,7 @@ QList<AECheckBox *> PreInstall::findAE()
 
 QList<AECheckBox *> PreInstall::findAeVersions(QString dir)
 {
-    QStringList filters("Adobe After Effects *");
+    QStringList filters("*After Effects *");
 
     QDir adobeDir(dir);
 
@@ -63,7 +66,7 @@ QString PreInstall::getPackagePath()
 {
     QString packagePath = "packages/";
 #ifdef Q_OS_MAC
-    QDir bundle = QApplication::applicationDirPath();
+    QDir bundle = QCoreApplication::applicationDirPath();
     bundle.cdUp();
     packagePath = bundle.path() + "/Resources/packages/";
 #endif

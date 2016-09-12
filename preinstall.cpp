@@ -46,7 +46,9 @@ QList<AECheckBox *> PreInstall::findAeVersions(QString dir)
         QDir scriptUI(path.absoluteFilePath() + "/Support Files/Scripts/ScriptUI Panels/");
 #endif
 #ifdef Q_OS_MAC
-        QFile presetEffectsFile(aePath.absolutePath() + "/" + aePath.dirName() + ".app/Contents/Resources/PresetEffects.xml");
+        QString aePackage = aePath.dirName();
+        if (aePath.absolutePath().endsWith("2015.3")) aePackage = aePackage.remove(aePackage.length()-2,aePackage.length());
+        QFile presetEffectsFile(aePath.absolutePath() + "/" + aePackage + ".app/Contents/Resources/PresetEffects.xml");
         QDir scriptUI(path.absoluteFilePath() + "/Scripts/ScriptUI Panels/");
 #endif
 

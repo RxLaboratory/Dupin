@@ -93,6 +93,7 @@ bool CustomPathWidget::detectAe(QString dir)
 #ifdef Q_OS_MAC
     QDir test(dir);
     QString aeName = test.dirName();
+    if (dir.endsWith("2015.3")) aeName = aeName.remove(aeName.length()-2,aeName.length());
     QFile pe(dir + "/" + aeName + ".app/Contents/Resources/PresetEffects.xml");
     qDebug() << pe.fileName();
 
